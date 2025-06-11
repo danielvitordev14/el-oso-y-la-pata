@@ -9,9 +9,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
         :root {
-            --girassol: #FFE066;
-            --girassol-dark: #FFD43B;
-            --text-dark: #222;
+            --girassol: #E6CC00;
+            --girassol-dark: #CCA000;
+            --text-dark: #000;
         }
         body {
             background-color: #212529 !important;
@@ -131,12 +131,38 @@
         .btn-primary, .btn-primary:visited {
             background-color: var(--girassol) !important;
             border-color: var(--girassol-dark) !important;
-            color: #222 !important;
+            color: #000 !important;
+            font-weight: 600 !important;
         }
         .btn-primary:hover, .btn-primary:focus {
             background-color: var(--girassol-dark) !important;
             border-color: var(--girassol-dark) !important;
-            color: #222 !important;
+            color: #000 !important;
+            font-weight: 600 !important;
+        }
+        .btn-primary:active, .btn-primary.active {
+            background-color: var(--girassol-dark) !important;
+            border-color: var(--girassol-dark) !important;
+            color: #000 !important;
+            font-weight: 600 !important;
+        }
+        /* Outros botões com cores de fundo amarelo */
+        .btn-warning, .btn-warning:visited {
+            background-color: var(--girassol) !important;
+            border-color: var(--girassol-dark) !important;
+            color: #000 !important;
+            font-weight: 600 !important;
+        }
+        .btn-warning:hover, .btn-warning:focus {
+            background-color: var(--girassol-dark) !important;
+            border-color: var(--girassol-dark) !important;
+            color: #000 !important;
+            font-weight: 600 !important;
+        }
+        /* Botões de link na navbar */
+        .navbar .btn-link {
+            color: var(--text-dark) !important;
+            font-weight: 600 !important;
         }
         .card, .card-header, .card-body {
             background-color: #181a1b !important;
@@ -148,7 +174,8 @@
         }
         .badge.bg-success {
             background-color: var(--girassol) !important;
-            color: #222 !important;
+            color: #000 !important;
+            font-weight: 600 !important;
         }
         .form-label, .form-text, .lead, h2, h4, h1, h3, h5, h6, .card-title {
             color: var(--girassol) !important;
