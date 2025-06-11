@@ -142,38 +142,65 @@
     
     .music-controls {
         position: absolute;
-        top: 30px;
-        right: 30px;
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%);
         display: flex;
-        gap: 10px;
+        gap: 8px;
         align-items: center;
+        opacity: 0.6;
+        transition: opacity 0.3s;
+    }
+    
+    .music-controls:hover {
+        opacity: 1;
     }
     
     .music-link {
         color: #FFD43B;
         text-decoration: none;
-        font-size: 1rem;
-        background: rgba(0,0,0,0.5);
-        padding: 10px 15px;
-        border-radius: 5px;
-        transition: background 0.3s;
+        font-size: 1.2rem;
+        background: rgba(0,0,0,0.7);
+        padding: 8px;
+        border-radius: 50%;
+        transition: all 0.3s;
+        backdrop-filter: blur(5px);
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(255,212,59,0.3);
+    }
+    
+    .music-link:hover {
+        background: rgba(255,212,59,0.2);
+        transform: scale(1.1);
+        border-color: #FFD43B;
+        color: #FFD43B;
     }
     
     .music-btn {
-        background: rgba(255,212,59,0.2);
-        border: 2px solid #FFD43B;
+        background: rgba(0,0,0,0.7);
+        border: 1px solid rgba(255,212,59,0.3);
         color: #FFD43B;
-        padding: 8px 12px;
-        border-radius: 6px;
+        padding: 0;
+        border-radius: 50%;
         cursor: pointer;
-        font-size: 0.9rem;
+        font-size: 1.2rem;
         transition: all 0.3s;
         backdrop-filter: blur(5px);
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     
     .music-btn:hover {
-        background: rgba(255,212,59,0.4);
-        transform: scale(1.05);
+        background: rgba(255,212,59,0.2);
+        transform: scale(1.1);
+        border-color: #FFD43B;
     }
     
     /* === RESPONSIVIDADE MOBILE === */
@@ -234,15 +261,16 @@
         }
         
         .music-controls {
-            top: 15px;
-            right: 15px;
-            flex-direction: column;
-            gap: 5px;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            gap: 6px;
         }
         
-        .music-btn {
-            padding: 6px 10px;
-            font-size: 0.8rem;
+        .music-btn, .music-link {
+            width: 32px;
+            height: 32px;
+            font-size: 1rem;
         }
     }
     
@@ -279,8 +307,8 @@
     
     {% if historia.musica_youtube %}
         <div class="music-controls">
-            <a href="{{ historia.musica_youtube }}" target="_blank" class="music-link">🎵 YouTube</a>
-            <button class="music-btn" id="musicToggle">🔊 Pausar</button>
+            <a href="{{ historia.musica_youtube }}" target="_blank" class="music-link" title="Abrir no YouTube">🎵</a>
+            <button class="music-btn" id="musicToggle" title="Pausar música">🔊</button>
         </div>
         <iframe id="musicPlayer" class="music-player" 
                 src="" 
@@ -509,14 +537,16 @@ document.addEventListener('DOMContentLoaded', function() {
             e.stopPropagation();
             if (isMusicPlaying) {
                 musicPlayer.src = '';
-                musicToggle.textContent = '🔇 Tocar';
+                musicToggle.textContent = '🔇';
+                musicToggle.title = 'Tocar música';
                 isMusicPlaying = false;
                 console.log('Música pausada');
             } else {
                 const embedUrl = getYouTubeEmbedUrl(musicUrl);
                 if (embedUrl) {
                     musicPlayer.src = embedUrl;
-                    musicToggle.textContent = '🔊 Pausar';
+                    musicToggle.textContent = '🔊';
+                    musicToggle.title = 'Pausar música';
                     isMusicPlaying = true;
                     console.log('Música retomada');
                 }
