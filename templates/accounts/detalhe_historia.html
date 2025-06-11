@@ -149,6 +149,16 @@
         align-items: center;
     }
     
+    .music-link {
+        color: #FFD43B;
+        text-decoration: none;
+        font-size: 1rem;
+        background: rgba(0,0,0,0.5);
+        padding: 10px 15px;
+        border-radius: 5px;
+        transition: background 0.3s;
+    }
+    
     .music-btn {
         background: rgba(255,212,59,0.2);
         border: 2px solid #FFD43B;
@@ -165,6 +175,103 @@
         background: rgba(255,212,59,0.4);
         transform: scale(1.05);
     }
+    
+    /* === RESPONSIVIDADE MOBILE === */
+    @media (max-width: 768px) {
+        .slideshow-container {
+            background-size: 40px 40px;
+            background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
+        }
+        
+        .slide {
+            padding: 10px;
+        }
+        
+        .slide img {
+            max-width: 95vw;
+            max-height: 60vh;
+            border-radius: 8px;
+        }
+        
+        .slide-text {
+            font-size: 1.2rem;
+            margin-top: 20px;
+            max-width: 90vw;
+            padding: 15px 20px;
+            border-radius: 10px;
+            line-height: 1.4;
+        }
+        
+        .historia-title {
+            top: 15px;
+            font-size: 1.3rem;
+            padding: 10px 15px;
+            border-radius: 8px;
+            max-width: 90vw;
+            text-align: center;
+        }
+        
+        .slide-counter {
+            bottom: 15px;
+            right: 15px;
+            font-size: 0.9rem;
+            padding: 6px 10px;
+        }
+        
+        .exit-hint {
+            bottom: 15px;
+            left: 15px;
+            font-size: 0.8rem;
+            padding: 6px 10px;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-start;
+        }
+        
+        .fullscreen-btn {
+            padding: 4px 8px;
+            font-size: 0.7rem;
+        }
+        
+        .music-controls {
+            top: 15px;
+            right: 15px;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .music-btn {
+            padding: 6px 10px;
+            font-size: 0.8rem;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .slide img {
+            max-height: 50vh;
+        }
+        
+        .slide-text {
+            font-size: 1rem;
+            margin-top: 15px;
+            padding: 12px 15px;
+        }
+        
+        .historia-title {
+            font-size: 1.1rem;
+            padding: 8px 12px;
+        }
+        
+        .exit-hint {
+            font-size: 0.7rem;
+            padding: 5px 8px;
+        }
+        
+        .fullscreen-btn {
+            padding: 3px 6px;
+            font-size: 0.65rem;
+        }
+    }
 </style>
 
 <div class="slideshow-container" id="slideshow">
@@ -172,6 +279,7 @@
     
     {% if historia.musica_youtube %}
         <div class="music-controls">
+            <a href="{{ historia.musica_youtube }}" target="_blank" class="music-link">🎵 YouTube</a>
             <button class="music-btn" id="musicToggle">🔊 Pausar</button>
         </div>
         <iframe id="musicPlayer" class="music-player" 
@@ -287,10 +395,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Clique em qualquer lugar para sair (exceto no botão fullscreen)
     slideshow.addEventListener('click', function(e) {
-        // Não sair se clicou no botão de fullscreen ou no botão de música
+        // Não sair se clicou no botão de fullscreen ou no link da música
         if (e.target.classList.contains('fullscreen-btn') || 
-            e.target.classList.contains('music-btn') ||
-            e.target.id === 'musicToggle') {
+            e.target.classList.contains('music-link') ||
+            e.target.closest('.music-link')) {
             return;
         }
         e.preventDefault();
@@ -299,6 +407,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Parar slideshow temporariamente ao passar mouse (apenas sobre controles)
     const exitHint = document.querySelector('.exit-hint');
+    const musicLink = document.querySelector('.music-link');
     
     if (exitHint) {
         exitHint.addEventListener('mouseenter', function() {
@@ -308,6 +417,18 @@ document.addEventListener('DOMContentLoaded', function() {
         
         exitHint.addEventListener('mouseleave', function() {
             console.log('Mouse fora dos controles - retomando');
+            startSlideshow();
+        });
+    }
+    
+    if (musicLink) {
+        musicLink.addEventListener('mouseenter', function() {
+            console.log('Mouse sobre link música - pausando temporariamente');
+            stopSlideshow();
+        });
+        
+        musicLink.addEventListener('mouseleave', function() {
+            console.log('Mouse fora do link música - retomando');
             startSlideshow();
         });
     }
