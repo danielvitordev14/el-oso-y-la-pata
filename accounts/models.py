@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
+from cloudinary_storage.storage import MediaCloudinaryStorage
 
 # Create your models here.
 
@@ -37,7 +38,7 @@ class Historia(models.Model):
 
 class ItemHistoria(models.Model):
     historia = models.ForeignKey(Historia, on_delete=models.CASCADE, related_name='itens')
-    foto = models.ImageField(upload_to='historias_fotos/')
+    foto = models.ImageField(upload_to='historias_fotos/', storage=MediaCloudinaryStorage())
     texto = models.TextField()
     ordem = models.PositiveIntegerField(default=0)
 
