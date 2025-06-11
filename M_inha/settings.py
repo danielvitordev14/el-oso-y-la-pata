@@ -158,6 +158,15 @@ LOGIN_URL = 'login'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# Serve media files in production
+if not DEBUG:
+    # Configure WhiteNoise to serve media files
+    WHITENOISE_USE_FINDERS = True
+    WHITENOISE_AUTOREFRESH = True
+    # Add media to static files serving
+    import os
+    STATICFILES_DIRS.append(MEDIA_ROOT)
+
 # Custom authentication backends
 AUTHENTICATION_BACKENDS = [
     'accounts.backends.EmailOrUsernameModelBackend',
