@@ -175,12 +175,12 @@ cloudinary.config(
     secure=True
 )
 
-# Use Cloudinary for media files in production
-if not DEBUG and CLOUDINARY_STORAGE['CLOUD_NAME']:
+# Use Cloudinary for media files
+if CLOUDINARY_STORAGE['CLOUD_NAME']:
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-else:
-    # Local media files for development  
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    
+# Local media files for development  
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Media URL configuration
 MEDIA_URL = '/media/'
