@@ -139,11 +139,15 @@
                 height: 60px !important;
             }
             .navbar-brand {
-                font-size: 1rem !important;
+                font-size: 0.9rem !important;
             }
             .navbar-brand img {
                 height: 40px !important;
                 margin-right: 5px !important;
+            }
+            .navbar-brand span {
+                white-space: nowrap;
+                max-width: 200px;
             }
             .container.mt-4 {
                 margin-top: 20px !important;
@@ -180,10 +184,13 @@
                 padding: 5px !important;
             }
             .navbar-brand {
-                font-size: 0.9rem !important;
+                font-size: 0.8rem !important;
             }
             .navbar-brand img {
                 height: 35px !important;
+            }
+            .navbar-brand span {
+                max-width: 160px;
             }
             .card-body {
                 padding: 15px !important;
@@ -381,8 +388,7 @@
                 
                 <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
                     <img src="https://res.cloudinary.com/dpjfyfrxk/image/upload/v1749657711/logo.png" alt="Logo" style="height: 64px; margin-right: 10px;">
-                    <span class="d-none d-sm-inline">El oso y la pata</span>
-                    <span class="d-sm-none">El oso</span>
+                    <span>El oso y la pata</span>
                 </a>
                 
                 <div class="collapse navbar-collapse d-none d-lg-flex" id="navbarNav">
@@ -489,7 +495,7 @@
             <div class="container">
                 <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
                     <img src="https://res.cloudinary.com/dpjfyfrxk/image/upload/v1749657711/logo.png" alt="Logo" style="height: 64px; margin-right: 10px;">
-                    El oso y la pata
+                    <span>El oso y la pata</span>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
