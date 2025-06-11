@@ -20,9 +20,12 @@ except Exception as e:
 
 try:
     import cloudinary
-    print(f"✅ Cloudinary importado: {cloudinary.__version__}")
+    print(f"✅ Cloudinary importado com sucesso")
+    print(f"Cloudinary config: {cloudinary.config()}")
 except ImportError as e:
     print(f"❌ Erro ao importar cloudinary: {e}")
+except Exception as e:
+    print(f"❌ Erro na configuração do cloudinary: {e}")
 
 try:
     import cloudinary_storage
