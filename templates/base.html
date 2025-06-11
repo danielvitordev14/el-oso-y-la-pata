@@ -108,24 +108,137 @@
         .navbar .nav-link.active, .navbar .nav-link:focus, .navbar .nav-link:hover {
             color: var(--girassol-dark) !important;
         }
-        @media (max-width: 768px) {
+        /* === RESPONSIVIDADE MOBILE === */
+        
+        /* Tablets e telas médias */
+        @media (max-width: 992px) {
             .sidebar {
-                width: 100%;
-                position: relative;
-                height: auto;
-                padding-top: 0;
-                top: 0;
-            }
-            .main-content, .navbar {
-                margin-left: 0;
-            }
-            .navbar {
-                position: relative;
-                left: 0;
-                width: 100%;
+                width: 200px;
             }
             .main-content {
-                margin-top: 0;
+                margin-left: 200px;
+            }
+        }
+        
+        /* Mobile */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none; /* Esconder sidebar no mobile */
+            }
+            .main-content {
+                margin-left: 0 !important;
+                margin-top: 70px !important; /* Espaço para navbar */
+                padding: 10px !important;
+            }
+            .navbar {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                z-index: 1030 !important;
+                height: 60px !important;
+            }
+            .navbar-brand {
+                font-size: 1rem !important;
+            }
+            .navbar-brand img {
+                height: 40px !important;
+                margin-right: 5px !important;
+            }
+            .container.mt-4 {
+                margin-top: 20px !important;
+            }
+            .auth-container {
+                margin: 20px auto !important;
+                padding: 15px !important;
+                max-width: 95% !important;
+            }
+            .card {
+                margin-bottom: 15px !important;
+            }
+            .btn {
+                width: 100% !important;
+                margin-bottom: 10px !important;
+            }
+            .btn + .btn {
+                margin-left: 0 !important;
+            }
+            /* Formulários responsivos */
+            .row.g-3 > .col-12 {
+                margin-bottom: 15px;
+            }
+            /* Grid de histórias responsivo */
+            .col-md-6, .col-md-8, .col-md-10 {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+        }
+        
+        /* Mobile pequeno */
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 5px !important;
+            }
+            .navbar-brand {
+                font-size: 0.9rem !important;
+            }
+            .navbar-brand img {
+                height: 35px !important;
+            }
+            .card-body {
+                padding: 15px !important;
+            }
+            h1, h2 {
+                font-size: 1.5rem !important;
+            }
+            h3, h4 {
+                font-size: 1.3rem !important;
+            }
+            .btn {
+                padding: 10px 15px !important;
+                font-size: 0.9rem !important;
+            }
+            /* Imagens das histórias responsivas */
+            .card img {
+                width: 100% !important;
+                height: auto !important;
+                max-height: 200px !important;
+                object-fit: cover !important;
+            }
+        }
+        
+        /* Menu hamburger para mobile */
+        @media (max-width: 768px) {
+            .mobile-menu {
+                position: fixed;
+                top: 60px;
+                left: -100%;
+                width: 80%;
+                height: calc(100vh - 60px);
+                background-color: #23272b;
+                transition: left 0.3s ease;
+                z-index: 1025;
+                overflow-y: auto;
+            }
+            .mobile-menu.active {
+                left: 0;
+            }
+            .mobile-menu .nav-link {
+                padding: 15px 20px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            .mobile-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 1020;
+                display: none;
+            }
+            .mobile-overlay.active {
+                display: block;
             }
         }
         .btn-primary, .btn-primary:visited {
@@ -261,14 +374,18 @@
         <!-- Navbar Superior -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
             <div class="container-fluid">
-                <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
-                    <img src="https://res.cloudinary.com/dpjfyfrxk/image/upload/v1749657711/logo.png" alt="Logo" style="height: 64px; margin-right: 10px;">
-                    El oso y la pata
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <!-- Menu hamburger (apenas mobile) -->
+                <button class="navbar-toggler d-lg-none" type="button" onclick="toggleMobileMenu()">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
+                
+                <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+                    <img src="https://res.cloudinary.com/dpjfyfrxk/image/upload/v1749657711/logo.png" alt="Logo" style="height: 64px; margin-right: 10px;">
+                    <span class="d-none d-sm-inline">El oso y la pata</span>
+                    <span class="d-sm-none">El oso</span>
+                </a>
+                
+                <div class="collapse navbar-collapse d-none d-lg-flex" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
                             <span class="nav-link">
@@ -285,8 +402,73 @@
                         </li>
                     </ul>
                 </div>
+                
+                <!-- Botão de logout mobile -->
+                <div class="d-lg-none">
+                    <form method="post" action="{% url 'logout' %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link nav-link p-0">
+                            <i class="bi bi-box-arrow-right"></i>
+                        </button>
+                    </form>
+                </div>
             </div>
         </nav>
+        
+        <!-- Menu Mobile -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'home' %}" onclick="closeMobileMenu()">
+                        <i class="bi bi-house-door"></i>
+                        Início
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'historias' %}" onclick="closeMobileMenu()">
+                        <i class="bi bi-book"></i>
+                        Histórias
+                    </a>
+                </li>
+                
+                {% load admin_tags %}
+                {% if user|is_admin %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'configuracoes' %}" onclick="closeMobileMenu()">
+                        <i class="bi bi-gear"></i>
+                        Configurações
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <hr class="sidebar-divider" style="border-color: var(--girassol-dark); margin: 0.5rem 1rem;">
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'admin_dashboard' %}" onclick="closeMobileMenu()">
+                        <i class="bi bi-shield-check"></i>
+                        Dashboard Admin
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'manage_users' %}" onclick="closeMobileMenu()">
+                        <i class="bi bi-people"></i>
+                        Gerenciar Usuários
+                    </a>
+                </li>
+                {% endif %}
+                
+                <li class="nav-item mt-3">
+                    <div class="nav-link">
+                        <small class="text-muted">
+                            Olá, {{ user.username }}
+                            {% show_admin_badge user %}
+                        </small>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Overlay para fechar menu mobile -->
+        <div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
 
         <!-- Conteúdo Principal -->
         <main class="main-content">
@@ -334,5 +516,45 @@
     {% endif %}
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- JavaScript para menu mobile -->
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const overlay = document.getElementById('mobileOverlay');
+            
+            if (menu.classList.contains('active')) {
+                closeMobileMenu();
+            } else {
+                menu.classList.add('active');
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Impede scroll da página
+            }
+        }
+        
+        function closeMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const overlay = document.getElementById('mobileOverlay');
+            
+            menu.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = 'auto'; // Restaura scroll da página
+        }
+        
+        // Fechar menu quando redimensionar a tela
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                closeMobileMenu();
+            }
+        });
+        
+        // Fechar menu ao clicar em um link
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuLinks = document.querySelectorAll('.mobile-menu .nav-link');
+            menuLinks.forEach(link => {
+                link.addEventListener('click', closeMobileMenu);
+            });
+        });
+    </script>
 </body>
 </html> 
