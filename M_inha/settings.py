@@ -175,9 +175,8 @@ cloudinary.config(
     secure=True
 )
 
-# Use Cloudinary for media files
-if CLOUDINARY_STORAGE['CLOUD_NAME']:
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+# Always use Cloudinary for media files (força o uso)
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Media files configuration
 MEDIA_URL = '/media/'
