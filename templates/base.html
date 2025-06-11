@@ -110,6 +110,30 @@
         }
         /* === RESPONSIVIDADE MOBILE === */
         
+        /* Desktop - reduzir espaçamento excessivo */
+        @media (min-width: 769px) {
+            .main-content {
+                margin-top: 50px; /* Reduzido ainda mais de 60px para 50px */
+                padding: 10px 15px; /* Reduzido padding superior */
+            }
+            .container-fluid {
+                padding-top: 0 !important;
+                margin-top: 0 !important;
+            }
+            .container-fluid.mt-0 {
+                margin-top: 0 !important;
+                padding-top: 0 !important;
+            }
+            .card {
+                margin-top: 0 !important;
+                margin-bottom: 0;
+            }
+            .row.justify-content-center {
+                margin-top: 0;
+                padding-top: 0;
+            }
+        }
+        
         /* Tablets e telas médias */
         @media (max-width: 992px) {
             .sidebar {
