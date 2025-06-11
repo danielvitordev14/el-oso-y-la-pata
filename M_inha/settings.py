@@ -39,8 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
     'cloudinary_storage',
+    'django.contrib.staticfiles',
     'cloudinary',
     'accounts',
 ]
@@ -158,20 +158,32 @@ LOGOUT_REDIRECT_URL = 'login'
 LOGIN_URL = 'login'
 
 # Cloudinary configuration
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default=''),
     'API_KEY': config('CLOUDINARY_API_KEY', default=''),
     'API_SECRET': config('CLOUDINARY_API_SECRET', default=''),
 }
 
+cloudinary.config(
+    cloud_name=CLOUDINARY_STORAGE['CLOUD_NAME'],
+    api_key=CLOUDINARY_STORAGE['API_KEY'],
+    api_secret=CLOUDINARY_STORAGE['API_SECRET'],
+    secure=True
+)
+
 # Use Cloudinary for media files in production
 if not DEBUG and CLOUDINARY_STORAGE['CLOUD_NAME']:
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    MEDIA_URL = '/media/'
 else:
-    # Local media files for development
-    MEDIA_URL = '/media/'
+    # Local media files for development  
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Media URL configuration
+MEDIA_URL = '/media/'
 
 # Custom authentication backends
 AUTHENTICATION_BACKENDS = [
