@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+{% load admin_tags %}
+
+{% block title %}Editar Usuário - El oso y la pata{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2 class="card-title mb-0">
+                            <i class="bi bi-person-gear"></i> Editar Usuário: {{ usuario_editado.username }}
+                            {% if usuario_editado.is_admin %}
+                                {% show_admin_badge usuario_editado %}
+                            {% endif %}
+                        </h2>
+                        <a href="{% url 'manage_users' %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Voltar
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 class="text-warning mb-3">
+                                    <i class="bi bi-person-badge"></i> Informações Básicas
+                                </h5>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.username.id_for_label }}" class="form-label">
+                                        {{ form.username.label }}
+                                    </label>
+                                    {{ form.username }}
+                                    {% if form.username.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.username.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="{{ form.email.id_for_label }}" class="form-label">
+                                        {{ form.email.label }}
+                                    </label>
+                                    {{ form.email }}
+                                    {% if form.email.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.email.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="{{ form.filha_nome.id_for_label }}" class="form-label">
+                                        {{ form.filha_nome.label }}
+                                    </label>
+                                    {{ form.filha_nome }}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <h5 class="text-warning mb-3">
+                                    <i class="bi bi-key"></i> Alteração de Senha
+                                </h5>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.nova_senha.id_for_label }}" class="form-label">
+                                        {{ form.nova_senha.label }}
+                                    </label>
+                                    {{ form.nova_senha }}
+                                    <div class="form-text text-muted">
+                                        {{ form.nova_senha.help_text }}
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="{{ form.confirmar_senha.id_for_label }}" class="form-label">
+                                        {{ form.confirmar_senha.label }}
+                                    </label>
+                                    {{ form.confirmar_senha }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h5 class="text-warning mb-3">
+                                    <i class="bi bi-chat-text"></i> Texto de Início
+                                </h5>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.texto_inicio.id_for_label }}" class="form-label">
+                                        {{ form.texto_inicio.label }}
+                                    </label>
+                                    {{ form.texto_inicio }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h5 class="text-warning mb-3">
+                                    <i class="bi bi-shield-check"></i> Permissões
+                                </h5>
+                                
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            {{ form.is_admin }}
+                                            <label class="form-check-label text-light" for="{{ form.is_admin.id_for_label }}">
+                                                {{ form.is_admin.label }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            {{ form.email_confirmed }}
+                                            <label class="form-check-label text-light" for="{{ form.email_confirmed.id_for_label }}">
+                                                {{ form.email_confirmed.label }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check mb-3">
+                                            {{ form.is_active }}
+                                            <label class="form-check-label text-light" for="{{ form.is_active.id_for_label }}">
+                                                {{ form.is_active.label }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="{% url 'manage_users' %}" class="btn btn-secondary me-md-2">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle"></i> Salvar Alterações
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Informações do Usuário -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-info-circle"></i> Informações do Usuário
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Data de Cadastro:</strong> {{ usuario_editado.date_joined|date:"d/m/Y H:i" }}</p>
+                            <p><strong>Último Login:</strong> 
+                                {% if usuario_editado.last_login %}
+                                    {{ usuario_editado.last_login|date:"d/m/Y H:i" }}
+                                {% else %}
+                                    <em>Nunca fez login</em>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Total de Histórias:</strong> {{ usuario_editado.historias.count }}</p>
+                            <p><strong>ID do Usuário:</strong> {{ usuario_editado.id }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Confirmar se senha foi preenchida
+    const form = document.querySelector('form');
+    const novaSenha = document.getElementById('{{ form.nova_senha.id_for_label }}');
+    
+    form.addEventListener('submit', function(e) {
+        if (novaSenha.value) {
+            if (!confirm('Tem certeza que deseja alterar a senha deste usuário?')) {
+                e.preventDefault();
+            }
+        }
+    });
+});
+</script>
+{% endblock %} 

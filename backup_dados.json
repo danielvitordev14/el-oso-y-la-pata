@@ -1,0 +1,100 @@
+[
+{
+  "model": "sessions.session",
+  "pk": "6dj3ro9216sva4ro8d5bc7qjdbn2j9vt",
+  "fields": {
+    "session_data": ".eJxVjLEKwjAQQP8ls5TEJrmco-AoTs7lcjlJsU2haSfx363QQdf3Hu-lOlqX3K1V5q5P6qSMOvyySPyU8hXEPK1lqc2OanMZqR9u833rCo1ynZIM573_m2SqeTt4tC0675FQ26MOZJxLwACUOAW0DjSgkcAeIFiQFCNytK0W79k-gnp_ANPWOOo:1uPDKY:7dd6MPc5c_f1wj0J4pNEs7_KcsZMAdGVlD93Azl84wM",
+    "expire_date": "2025-06-25T04:44:54.581Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "d01zgjr688xx2b31050v4ptihurblzmo",
+  "fields": {
+    "session_data": ".eJxVjLEKwyAUAP_FuQS1yVM7FjKWTp3D8_nE0MRAjFPpvzeFDO16d9xLDFi3NNTC6zAGcRFanH6ZR3py_gokWmreSnOg0vQzjtN9fexdxplvS-DpevR_k4Ql7QewTjp95o7aEE2wMZJrleYusvEgodUKvTdSOyBpKZKCqICN8aTBAon3BwXxOcE:1uPEHX:PTa96KRyd9r_mXQ2jbJhEkYOkzjYdjZmoP9HJDNwKOY",
+    "expire_date": "2025-06-25T05:45:51.601Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "kn94xx1xma2gbdwb1323qwfh9uqkpnzf",
+  "fields": {
+    "session_data": ".eJxVjLEKwjAQQP8ls5TEJrmco-AoTs7lcjlJsU2haSfx363QQdf3Hu-lOlqX3K1V5q5P6qSMOvyySPyU8hXEPK1lqc2OanMZqR9u833rCo1ynZIM573_m2SqeTt4tC0675FQ26MOZJxLwACUOAW0DjSgkcAeIFiQFCNytK0W79k-gnp_ANPWOOo:1uOynk:VnpPAPfYl-El1GaBNpkOAOu2OQLY3htY_-rPQmfyNZU",
+    "expire_date": "2025-06-24T13:14:04.657Z"
+  }
+},
+{
+  "model": "accounts.customuser",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$DYpqLklQBmVDnAAE5kz5Qa$181frO1tNcqPYULdSbXMoLbze8aIwIGOM0Y0/r45JNs=",
+    "last_login": "2025-06-11T04:44:54.572Z",
+    "is_superuser": true,
+    "username": "daniel_vitor14",
+    "first_name": "",
+    "last_name": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-06-10T02:02:09.367Z",
+    "email": "danielvitorr14@gmail.com",
+    "filha_nome": "leka",
+    "email_confirmed": false,
+    "is_admin": true,
+    "texto_inicio": null,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.customuser",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$Cny5fthosuA0q3RyEH6CE2$GCdwWrIvsfwIDZ+L6nFL5xzlxdv0JbBiNB0IRRkkMC4=",
+    "last_login": "2025-06-11T05:45:51.588Z",
+    "is_superuser": false,
+    "username": "Amor",
+    "first_name": "",
+    "last_name": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-06-10T02:10:27.239Z",
+    "email": "d.vitor57@gmail.com",
+    "filha_nome": "leka",
+    "email_confirmed": false,
+    "is_admin": false,
+    "texto_inicio": "Criei esse cantinho com muito carinho pra mostrar um pedacinho da nossa história, desde os primeiros sorrisos até os momentos mais incríveis que vivemos juntos.\r\n\r\nEspero que você goste. 💖💫",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.historia",
+  "pk": 1,
+  "fields": {
+    "usuario": [
+      "danielvitorr14@gmail.com"
+    ],
+    "titulo": "teste",
+    "criado_em": "2025-06-10T02:52:26.763Z",
+    "musica_youtube": "https://www.youtube.com/watch?v=_urX_y1JMpU"
+  }
+},
+{
+  "model": "accounts.itemhistoria",
+  "pk": 1,
+  "fields": {
+    "historia": 1,
+    "foto": "historias_fotos/fantasy-dragon-with-girl-hd-wallpaper-uhdpaper.com-7910g.jpg",
+    "texto": "uhu teste jjjjjjj",
+    "ordem": 1
+  }
+},
+{
+  "model": "accounts.itemhistoria",
+  "pk": 3,
+  "fields": {
+    "historia": 1,
+    "foto": "historias_fotos/wallpapersden.com_cypher-valorant-cool-cinamatic-art_3100x2000.jpg",
+    "texto": "Cypherzao",
+    "ordem": 2
+  }
+}
+]

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Excluir Item da História - M_inha{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card mt-5">
+                <div class="card-header bg-danger text-white">
+                    <h2 class="card-title mb-0">Excluir Item da História</h2>
+                </div>
+                <div class="card-body">
+                    <p>Tem certeza que deseja excluir este item da história <strong>{{ object.historia.titulo }}</strong>?</p>
+                    <form method="post">{% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Sim, excluir</button>
+                        <a href="{% url 'configuracoes' %}" class="btn btn-secondary ms-2">Cancelar</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

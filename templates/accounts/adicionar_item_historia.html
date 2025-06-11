@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Adicionar Item - {{ historia.titulo }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Adicionar Item à História: {{ historia.titulo }}</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-primary">Adicionar Item</button>
+                        <a href="{% url 'detalhe_historia' historia.id %}" class="btn btn-secondary">Voltar</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

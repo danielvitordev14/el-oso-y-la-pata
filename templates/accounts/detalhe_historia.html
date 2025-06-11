@@ -1,0 +1,408 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ historia.titulo }} - Apresentação{% endblock %}
+
+{% block content %}
+<style>
+    .slideshow-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: 
+            linear-gradient(45deg, #000 25%, transparent 25%),
+            linear-gradient(-45deg, #000 25%, transparent 25%),
+            linear-gradient(45deg, transparent 75%, #000 75%),
+            linear-gradient(-45deg, transparent 75%, #000 75%);
+        background-size: 60px 60px;
+        background-position: 0 0, 0 30px, 30px -30px, -30px 0px;
+        background-color: #FFD43B;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+    
+    .slide {
+        display: none;
+        text-align: center;
+        width: 100%;
+        height: 100%;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+    
+    .slide.active {
+        display: flex;
+    }
+    
+    .slide img {
+        max-width: 90vw;
+        max-height: 70vh;
+        object-fit: contain;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    
+    .slide-text {
+        color: white;
+        font-size: 1.5rem;
+        margin-top: 30px;
+        max-width: 80vw;
+        text-align: center;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        line-height: 1.6;
+        background: rgba(0,0,0,0.8);
+        padding: 20px 30px;
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255,212,59,0.3);
+    }
+    
+    .historia-title {
+        position: absolute;
+        top: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #FFD43B;
+        font-size: 2rem;
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        background: rgba(0,0,0,0.7);
+        padding: 15px 25px;
+        border-radius: 10px;
+        backdrop-filter: blur(5px);
+    }
+    
+    .slide-counter {
+        position: absolute;
+        bottom: 30px;
+        right: 30px;
+        color: rgba(255,255,255,0.9);
+        font-size: 1rem;
+        background: rgba(0,0,0,0.7);
+        padding: 8px 12px;
+        border-radius: 8px;
+        backdrop-filter: blur(5px);
+    }
+    
+    .exit-hint {
+        position: absolute;
+        bottom: 30px;
+        left: 30px;
+        color: rgba(255,255,255,0.9);
+        font-size: 0.9rem;
+        animation: pulse 2s infinite;
+        background: rgba(0,0,0,0.7);
+        padding: 8px 12px;
+        border-radius: 8px;
+        backdrop-filter: blur(5px);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .fullscreen-btn {
+        background: rgba(255,212,59,0.2);
+        border: 2px solid #FFD43B;
+        color: #FFD43B;
+        padding: 6px 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        transition: all 0.3s;
+        backdrop-filter: blur(5px);
+    }
+    
+    .fullscreen-btn:hover {
+        background: rgba(255,212,59,0.4);
+        transform: scale(1.05);
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 0.7; }
+        50% { opacity: 1; }
+    }
+    
+    .music-player {
+        position: absolute;
+        top: -1000px;
+        left: -1000px;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        pointer-events: none;
+    }
+    
+    .music-controls {
+        position: absolute;
+        top: 30px;
+        right: 30px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+    
+    .music-btn {
+        background: rgba(255,212,59,0.2);
+        border: 2px solid #FFD43B;
+        color: #FFD43B;
+        padding: 8px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.3s;
+        backdrop-filter: blur(5px);
+    }
+    
+    .music-btn:hover {
+        background: rgba(255,212,59,0.4);
+        transform: scale(1.05);
+    }
+</style>
+
+<div class="slideshow-container" id="slideshow">
+    <div class="historia-title">{{ historia.titulo }}</div>
+    
+    {% if historia.musica_youtube %}
+        <div class="music-controls">
+            <button class="music-btn" id="musicToggle">🔊 Pausar</button>
+        </div>
+        <iframe id="musicPlayer" class="music-player" 
+                src="" 
+                frameborder="0" 
+                allow="autoplay; encrypted-media">
+        </iframe>
+    {% endif %}
+    
+    {% if itens %}
+        {% for item in itens %}
+            <div class="slide {% if forloop.first %}active{% endif %}">
+                <img src="{{ item.foto.url }}" alt="Foto da história">
+                <div class="slide-text">{{ item.texto }}</div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="slide active">
+            <div class="slide-text">Nenhum item cadastrado para esta história.</div>
+        </div>
+    {% endif %}
+    
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">{{ itens.count }}</span>
+    </div>
+    
+    <div class="exit-hint">
+        <span>Clique para sair</span>
+        <button class="fullscreen-btn">Tela Cheia</button>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const slideshow = document.getElementById('slideshow');
+    const slides = document.querySelectorAll('.slide');
+    const currentSlideSpan = document.getElementById('current-slide');
+    const totalSlidesSpan = document.getElementById('total-slides');
+    
+    let currentIndex = 0;
+    let slideInterval;
+    let isRunning = false;
+    let musicPlayer = null;
+    let isMusicPlaying = false;
+    
+    console.log('Slideshow iniciado. Total de slides:', slides.length);
+    
+    // Verificar se há slides
+    if (slides.length === 0) {
+        console.error('Nenhum slide encontrado!');
+        return;
+    }
+    
+    // Atualizar contador de slides
+    if (totalSlidesSpan) {
+        totalSlidesSpan.textContent = slides.length;
+    }
+    
+    function showSlide(index) {
+        console.log('Mostrando slide:', index + 1);
+        slides.forEach((slide, i) => {
+            slide.classList.remove('active');
+            if (i === index) {
+                slide.classList.add('active');
+            }
+        });
+        if (currentSlideSpan) {
+            currentSlideSpan.textContent = index + 1;
+        }
+    }
+    
+    function nextSlide() {
+        if (slides.length <= 1) return;
+        currentIndex = (currentIndex + 1) % slides.length;
+        showSlide(currentIndex);
+        console.log('Próximo slide:', currentIndex + 1);
+    }
+    
+    function startSlideshow() {
+        if (isRunning || slides.length <= 1) return;
+        console.log('Iniciando slideshow automático - 10 segundos por slide');
+        isRunning = true;
+        slideInterval = setInterval(nextSlide, 10000); // 10 segundos por slide
+    }
+    
+    function stopSlideshow() {
+        if (!isRunning) return;
+        console.log('Parando slideshow automático');
+        isRunning = false;
+        clearInterval(slideInterval);
+    }
+    
+    function exitSlideshow() {
+        console.log('Saindo do slideshow');
+        stopSlideshow();
+        // Parar música ao sair
+        {% if historia.musica_youtube %}
+        if (musicPlayer) {
+            musicPlayer.src = '';
+        }
+        {% endif %}
+        window.location.href = "{% url 'historias' %}";
+    }
+    
+    // Mostrar primeiro slide
+    showSlide(0);
+    
+    // Iniciar slideshow automaticamente após um pequeno delay
+    setTimeout(function() {
+        console.log('Iniciando slideshow após delay');
+        startSlideshow();
+    }, 2000);
+    
+    // Clique em qualquer lugar para sair (exceto no botão fullscreen)
+    slideshow.addEventListener('click', function(e) {
+        // Não sair se clicou no botão de fullscreen ou no botão de música
+        if (e.target.classList.contains('fullscreen-btn') || 
+            e.target.classList.contains('music-btn') ||
+            e.target.id === 'musicToggle') {
+            return;
+        }
+        e.preventDefault();
+        exitSlideshow();
+    });
+    
+    // Parar slideshow temporariamente ao passar mouse (apenas sobre controles)
+    const exitHint = document.querySelector('.exit-hint');
+    
+    if (exitHint) {
+        exitHint.addEventListener('mouseenter', function() {
+            console.log('Mouse sobre controles - pausando temporariamente');
+            stopSlideshow();
+        });
+        
+        exitHint.addEventListener('mouseleave', function() {
+            console.log('Mouse fora dos controles - retomando');
+            startSlideshow();
+        });
+    }
+    
+    // Tecla ESC para sair
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            exitSlideshow();
+        }
+    });
+    
+    // Navegação manual com setas
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+            e.preventDefault();
+            nextSlide();
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+            showSlide(currentIndex);
+        }
+    });
+
+    const fullscreenBtn = document.querySelector('.fullscreen-btn');
+    if (fullscreenBtn) {
+        // Atualizar texto do botão baseado no estado
+        function updateFullscreenBtn() {
+            if (document.fullscreenElement) {
+                fullscreenBtn.textContent = 'Sair Tela Cheia';
+            } else {
+                fullscreenBtn.textContent = 'Tela Cheia';
+            }
+        }
+        
+        fullscreenBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // Evitar fechar o slideshow
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                slideshow.requestFullscreen();
+            }
+        });
+        
+        // Escutar mudanças no fullscreen
+        document.addEventListener('fullscreenchange', updateFullscreenBtn);
+        
+        // Atualizar texto inicial
+        updateFullscreenBtn();
+    }
+
+    // Função para converter URL do YouTube para embed
+    function getYouTubeEmbedUrl(url) {
+        const videoId = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/);
+        if (videoId) {
+            return `https://www.youtube.com/embed/${videoId[1]}?autoplay=1&loop=1&playlist=${videoId[1]}&controls=0&mute=0`;
+        }
+        return null;
+    }
+    
+    // Inicializar música se existir
+    {% if historia.musica_youtube %}
+    musicPlayer = document.getElementById('musicPlayer');
+    const musicToggle = document.getElementById('musicToggle');
+    const musicUrl = "{{ historia.musica_youtube }}";
+    
+    if (musicPlayer && musicUrl) {
+        const embedUrl = getYouTubeEmbedUrl(musicUrl);
+        if (embedUrl) {
+            musicPlayer.src = embedUrl;
+            isMusicPlaying = true;
+            console.log('Música iniciada:', embedUrl);
+        }
+    }
+    
+    // Controle de play/pause da música
+    if (musicToggle) {
+        musicToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (isMusicPlaying) {
+                musicPlayer.src = '';
+                musicToggle.textContent = '🔇 Tocar';
+                isMusicPlaying = false;
+                console.log('Música pausada');
+            } else {
+                const embedUrl = getYouTubeEmbedUrl(musicUrl);
+                if (embedUrl) {
+                    musicPlayer.src = embedUrl;
+                    musicToggle.textContent = '🔊 Pausar';
+                    isMusicPlaying = true;
+                    console.log('Música retomada');
+                }
+            }
+        });
+    }
+    {% endif %}
+});
+</script>
+{% endblock %} 

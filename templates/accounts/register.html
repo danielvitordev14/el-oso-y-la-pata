@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Cadastro - M_inha{% endblock %}
+
+{% block auth_content %}
+<div class="auth-container">
+    <h2 class="text-center mb-4">Cadastro</h2>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                {{ field.errors }}
+                {{ field }}
+                {% if field.help_text %}
+                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary">Cadastrar</button>
+        </div>
+    </form>
+    <div class="text-center mt-3">
+        <p>Já tem uma conta? <a href="{% url 'login' %}">Faça login</a></p>
+    </div>
+</div>
+{% endblock %} 

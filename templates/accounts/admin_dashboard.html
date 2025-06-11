@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load admin_tags %}
+
+{% block title %}Dashboard Administrativo - El oso y la pata{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3">
+                    <i class="bi bi-shield-check"></i> Dashboard Administrativo
+                </h1>
+                <span class="badge bg-warning text-dark">
+                    <i class="bi bi-person-check"></i> {{ user|user_type }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estatísticas -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">
+                        <i class="bi bi-people"></i> Total de Usuários
+                    </h5>
+                    <h2 class="text-primary">{{ total_users }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">
+                        <i class="bi bi-shield-check"></i> Administradores
+                    </h5>
+                    <h2 class="text-warning">{{ total_admins }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">
+                        <i class="bi bi-book"></i> Total de Histórias
+                    </h5>
+                    <h2 class="text-info">{{ total_historias }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">
+                        <i class="bi bi-image"></i> Total de Itens
+                    </h5>
+                    <h2 class="text-success">{{ total_itens }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Usuários Recentes -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-clock-history"></i> Usuários Recentes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_users %}
+                        <div class="list-group list-group-flush">
+                            {% for user in recent_users %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ user.username }}</strong>
+                                    <br>
+                                    <small class="text-muted">{{ user.email }}</small>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    {% if user.is_admin %}
+                                        <span class="badge bg-warning text-dark me-2">
+                                            <i class="bi bi-shield-check"></i> Admin
+                                        </span>
+                                    {% endif %}
+                                    <small class="text-muted">{{ user.date_joined|date:"d/m/Y H:i" }}</small>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Nenhum usuário encontrado.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Ações Rápidas -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-lightning"></i> Ações Rápidas
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'manage_users' %}" class="btn btn-primary">
+                            <i class="bi bi-people"></i> Gerenciar Usuários
+                        </a>
+                        <a href="/admin/" class="btn btn-secondary" target="_blank">
+                            <i class="bi bi-gear"></i> Admin Django
+                        </a>
+                        <a href="{% url 'historias' %}" class="btn btn-info">
+                            <i class="bi bi-book"></i> Ver Todas as Histórias
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

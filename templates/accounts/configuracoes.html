@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Configurações - El oso y la pata{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Criar Nova História</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" class="row g-3">
+                        {% csrf_token %}
+                        <div class="col-12">
+                            <label for="id_titulo" class="form-label">Título da História</label>
+                            {{ historia_form.titulo }}
+                        </div>
+                        <div class="col-12">
+                            <label for="id_musica_youtube" class="form-label">Link da música do YouTube</label>
+                            {{ historia_form.musica_youtube }}
+                            <div class="form-text">Opcional. Ex: https://www.youtube.com/watch?v=...</div>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">Criar História</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Suas Histórias</h2>
+                </div>
+                <div class="card-body">
+                    {% if historias %}
+                        <ul class="list-group">
+                            {% for historia in historias %}
+                                <li class="list-group-item bg-dark text-light">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h6 class="mb-1">{{ historia.titulo }}</h6>
+                                            <small class="text-muted">{{ historia.itens.count }} item{% if historia.itens.count != 1 %}s{% endif %}</small>
+                                        </div>
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'detalhe_historia' historia.id %}" class="btn btn-sm btn-outline-light">Ver</a>
+                                            <a href="{% url 'adicionar_item_historia' historia.id %}" class="btn btn-sm btn-primary">+ Item</a>
+                                            <button class="btn btn-sm btn-info" type="button" data-bs-toggle="collapse" data-bs-target="#itens-{{ historia.id }}">
+                                                Gerenciar Itens
+                                            </button>
+                                            <a href="{% url 'editar_historia' historia.id %}" class="btn btn-warning btn-sm">Editar</a>
+                                            <a href="{% url 'deletar_historia' historia.id %}" class="btn btn-danger btn-sm">Deletar</a>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Lista de itens colapsável -->
+                                    <div class="collapse mt-3" id="itens-{{ historia.id }}">
+                                        {% if historia.itens.all %}
+                                            <div class="card bg-secondary">
+                                                <div class="card-header py-2">
+                                                    <small class="text-light">Itens da História</small>
+                                                </div>
+                                                <div class="card-body p-2">
+                                                    {% for item in historia.itens.all|dictsort:"ordem" %}
+                                                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-secondary">
+                                                            <div class="d-flex align-items-center">
+                                                                <span class="badge bg-warning text-dark me-2">{{ item.ordem }}</span>
+                                                                <small class="text-light">{{ item.texto|truncatechars:50 }}</small>
+                                                            </div>
+                                                            <div class="btn-group btn-group-sm">
+                                                                <a href="{% url 'editar_item_historia' item.id %}" class="btn btn-warning btn-sm">Editar</a>
+                                                                <a href="{% url 'deletar_item_historia' item.id %}" class="btn btn-danger btn-sm">Deletar</a>
+                                                            </div>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <div class="alert alert-info py-2 mb-0">
+                                                <small>Nenhum item adicionado ainda.</small>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-light">Você ainda não criou nenhuma história.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

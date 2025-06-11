@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}{% if object %}Editar Item da História{% else %}Adicionar Item à História{% endif %} - M_inha{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">{% if object %}Editar Item da História{% else %}Adicionar Item à História{% endif %}</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data" class="row g-3">
+                        {% csrf_token %}
+                        <div class="col-12">
+                            <label for="id_foto" class="form-label">Foto</label>
+                            {{ form.foto }}
+                        </div>
+                        <div class="col-12">
+                            <label for="id_texto" class="form-label">Texto</label>
+                            {{ form.texto }}
+                        </div>
+                        <div class="col-12">
+                            <label for="id_ordem" class="form-label">Ordem do Item</label>
+                            {{ form.ordem }}
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">Salvar</button>
+                            <a href="{% url 'configuracoes' %}" class="btn btn-secondary ms-2">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% load admin_tags %}
+
+{% block title %}Gerenciar Usuários - El oso y la pata{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3">
+                    <i class="bi bi-people"></i> Gerenciar Usuários
+                </h1>
+                <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Voltar ao Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-list"></i> Lista de Usuários
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if users %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Usuário</th>
+                                        <th>Email</th>
+                                        <th>Nome da Filha</th>
+                                        <th>Tipo</th>
+                                        <th>Email Confirmado</th>
+                                        <th>Data de Cadastro</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for user_item in users %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ user_item.username }}</strong>
+                                        </td>
+                                        <td>{{ user_item.email }}</td>
+                                        <td>{{ user_item.filha_nome }}</td>
+                                        <td>
+                                            {% if user_item.is_admin %}
+                                                <span class="badge bg-warning text-dark">
+                                                    <i class="bi bi-shield-check"></i> Administrador
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">
+                                                    <i class="bi bi-person"></i> Usuário Comum
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if user_item.email_confirmed %}
+                                                <span class="badge bg-success">
+                                                    <i class="bi bi-check-circle"></i> Confirmado
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-danger">
+                                                    <i class="bi bi-x-circle"></i> Não Confirmado
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ user_item.date_joined|date:"d/m/Y H:i" }}</td>
+                                        <td>
+                                                                                            <div class="btn-group" role="group">
+                                                    <a href="{% url 'admin_editar_usuario' user_item.id %}" class="btn btn-primary btn-sm">
+                                                        <i class="bi bi-pencil-square"></i> Editar
+                                                    </a>
+                                                    
+                                                    {% if user_item != user %}
+                                                        {% if not user_item.is_admin %}
+                                                            <form method="post" class="d-inline">
+                                                                {% csrf_token %}
+                                                                <input type="hidden" name="user_id" value="{{ user_item.id }}">
+                                                                <input type="hidden" name="action" value="promote">
+                                                                <button type="submit" class="btn btn-success btn-sm" 
+                                                                        onclick="return confirm('Tem certeza que deseja promover {{ user_item.username }} a administrador?')">
+                                                                    <i class="bi bi-arrow-up-circle"></i> Promover
+                                                                </button>
+                                                            </form>
+                                                        {% else %}
+                                                            <form method="post" class="d-inline">
+                                                                {% csrf_token %}
+                                                                <input type="hidden" name="user_id" value="{{ user_item.id }}">
+                                                                <input type="hidden" name="action" value="demote">
+                                                                <button type="submit" class="btn btn-warning btn-sm" 
+                                                                        onclick="return confirm('Tem certeza que deseja rebaixar {{ user_item.username }} para usuário comum?')">
+                                                                    <i class="bi bi-arrow-down-circle"></i> Rebaixar
+                                                                </button>
+                                                            </form>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <span class="badge bg-info">
+                                                            <i class="bi bi-person-check"></i> Você
+                                                        </span>
+                                                    {% endif %}
+                                                </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="bi bi-people" style="font-size: 3rem; color: var(--girassol);"></i>
+                            <h5 class="mt-3">Nenhum usuário encontrado</h5>
+                            <p class="text-muted">Não há usuários cadastrados no sistema.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Informações Importantes -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="alert alert-info">
+                <h6><i class="bi bi-info-circle"></i> Informações Importantes:</h6>
+                <ul class="mb-0">
+                    <li><strong>Promover:</strong> Transforma um usuário comum em administrador (ganha acesso ao painel admin)</li>
+                    <li><strong>Rebaixar:</strong> Remove privilégios de administrador (não pode ser feito em você mesmo)</li>
+                    <li><strong>Badge Admin:</strong> Usuários administradores aparecem com um badge amarelo na interface</li>
+                    <li><strong>Acesso Restrito:</strong> Apenas administradores podem acessar esta página</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
