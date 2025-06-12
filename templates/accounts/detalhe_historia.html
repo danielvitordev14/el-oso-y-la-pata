@@ -478,12 +478,31 @@ document.addEventListener('DOMContentLoaded', function() {
         // Não sair se clicou no botão de fullscreen ou no link da música
         if (e.target.classList.contains('fullscreen-btn') || 
             e.target.classList.contains('music-link') ||
-            e.target.closest('.music-link')) {
+            e.target.closest('.music-link') ||
+            e.target.classList.contains('music-btn')) {
             return;
         }
         e.preventDefault();
         exitSlideshow();
     });
+    
+    // Tentar tocar música na primeira interação do usuário
+    slideshow.addEventListener('click', function() {
+        {% if historia.musica_youtube %}
+        if (musicPlayer && !isMusicPlaying) {
+            console.log('Primeira interação - tentando autoplay');
+            const embedUrl = getYouTubeEmbedUrl("{{ historia.musica_youtube }}", true);
+            if (embedUrl) {
+                musicPlayer.src = embedUrl;
+                isMusicPlaying = true;
+                if (musicToggle) {
+                    musicToggle.textContent = '🔊';
+                    musicToggle.title = 'Pausar música';
+                }
+            }
+        }
+        {% endif %}
+    }, { once: true }); // Executar apenas uma vez
     
     // Parar slideshow temporariamente ao passar mouse (apenas sobre controles)
     const exitHint = document.querySelector('.exit-hint');
@@ -602,42 +621,62 @@ document.addEventListener('DOMContentLoaded', function() {
     const musicUrl = "{{ historia.musica_youtube }}";
     
     if (musicPlayer && musicUrl) {
-        // Tentar autoplay primeiro
-        const embedUrlAutoplay = getYouTubeEmbedUrl(musicUrl, true);
-        if (embedUrlAutoplay) {
-            try {
-                musicPlayer.src = embedUrlAutoplay;
-                isMusicPlaying = true;
-                console.log('Música iniciada com autoplay:', embedUrlAutoplay);
-                
-                // Verificar se carregou após 3 segundos
-                setTimeout(() => {
-                    // Se iframe não carregou, tentar sem autoplay
-                    if (!musicPlayer.src || musicPlayer.src.includes('about:blank')) {
-                        console.log('Autoplay falhou, tentando sem autoplay');
-                        const embedUrlNoAutoplay = getYouTubeEmbedUrl(musicUrl, false);
-                        musicPlayer.src = embedUrlNoAutoplay;
-                        isMusicPlaying = false;
-                        if (musicToggle) {
-                            musicToggle.textContent = '🔇';
-                            musicToggle.title = 'Tocar música';
-                        }
+        // Função para iniciar música automaticamente
+        function startAutoMusic() {
+            const embedUrlAutoplay = getYouTubeEmbedUrl(musicUrl, true);
+            if (embedUrlAutoplay) {
+                try {
+                    musicPlayer.src = embedUrlAutoplay;
+                    isMusicPlaying = true;
+                    console.log('Música iniciada automaticamente:', embedUrlAutoplay);
+                    
+                    // Atualizar botão para mostrar que está tocando
+                    if (musicToggle) {
+                        musicToggle.textContent = '🔊';
+                        musicToggle.title = 'Pausar música';
                     }
-                }, 3000);
-                
-            } catch (error) {
-                console.warn('Erro ao carregar música do YouTube:', error);
-                console.log('Tentando sem autoplay...');
-                // Fallback sem autoplay
-                const embedUrlNoAutoplay = getYouTubeEmbedUrl(musicUrl, false);
-                musicPlayer.src = embedUrlNoAutoplay;
-                isMusicPlaying = false;
-                if (musicToggle) {
-                    musicToggle.textContent = '🔇';
-                    musicToggle.title = 'Tocar música';
+                    
+                    // Mostrar botão unmute após um tempo (pode estar mutado)
+                    setTimeout(() => {
+                        const unmuteBtn = document.getElementById('unmuteBtn');
+                        if (unmuteBtn && isMusicPlaying) {
+                            unmuteBtn.style.display = 'flex';
+                            unmuteBtn.textContent = '🔈';
+                            unmuteBtn.title = 'Clique para ativar som';
+                        }
+                    }, 2000);
+                    
+                } catch (error) {
+                    console.warn('Erro ao carregar música automaticamente:', error);
+                    // Se falhar, deixar pronto para o usuário clicar
+                    isMusicPlaying = false;
+                    if (musicToggle) {
+                        musicToggle.textContent = '🔇';
+                        musicToggle.title = 'Tocar música';
+                    }
                 }
             }
         }
+        
+        // Múltiplas tentativas de autoplay
+        // Tentativa 1: Imediatamente
+        startAutoMusic();
+        
+        // Tentativa 2: Após 1 segundo
+        setTimeout(() => {
+            if (!isMusicPlaying) {
+                console.log('Segunda tentativa de autoplay');
+                startAutoMusic();
+            }
+        }, 1000);
+        
+        // Tentativa 3: Após slideshow iniciar
+        setTimeout(() => {
+            if (!isMusicPlaying) {
+                console.log('Terceira tentativa de autoplay após slideshow');
+                startAutoMusic();
+            }
+        }, 3000);
     }
     
     // Controle de play/pause da música
@@ -692,11 +731,25 @@ document.addEventListener('DOMContentLoaded', function() {
     if (unmuteBtn) {
         unmuteBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            // Recarregar iframe com autoplay não mutado
-            const embedUrl = getYouTubeEmbedUrl(musicUrl, true).replace('mute=1', 'mute=0');
-            musicPlayer.src = embedUrl;
+            
+            // Tentar usar API do YouTube primeiro
+            try {
+                if (musicPlayer.contentWindow && musicPlayer.contentWindow.postMessage) {
+                    musicPlayer.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+                    console.log('Tentando unmute via API do YouTube');
+                }
+            } catch (apiError) {
+                console.log('API não disponível, recarregando iframe');
+            }
+            
+            // Fallback: recarregar iframe sem mute
+            setTimeout(() => {
+                const embedUrl = getYouTubeEmbedUrl(musicUrl, true).replace('mute=1', 'mute=0');
+                musicPlayer.src = embedUrl;
+                console.log('Recarregando com som:', embedUrl);
+            }, 500);
+            
             unmuteBtn.style.display = 'none';
-            console.log('Tentando unmute:', embedUrl);
         });
     }
     {% endif %}
