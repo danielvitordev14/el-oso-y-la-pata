@@ -162,17 +162,21 @@ LOGIN_URL = 'login'
 
 # Cloudinary configuration
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default=''),
+    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default='dpjfyfrxk'),
     'API_KEY': config('CLOUDINARY_API_KEY', default=''),
     'API_SECRET': config('CLOUDINARY_API_SECRET', default=''),
 }
 
-cloudinary.config(
-    cloud_name=CLOUDINARY_STORAGE['CLOUD_NAME'],
-    api_key=CLOUDINARY_STORAGE['API_KEY'],
-    api_secret=CLOUDINARY_STORAGE['API_SECRET'],
-    secure=True
-)
+# Configurar Cloudinary apenas se cloud_name estiver disponível
+if CLOUDINARY_STORAGE['CLOUD_NAME']:
+    cloudinary.config(
+        cloud_name=CLOUDINARY_STORAGE['CLOUD_NAME'],
+        api_key=CLOUDINARY_STORAGE['API_KEY'],
+        api_secret=CLOUDINARY_STORAGE['API_SECRET'],
+        secure=True
+    )
+else:
+    print("Aviso: CLOUDINARY_CLOUD_NAME não configurado - usando configuração padrão")
 
 # Always use Cloudinary for media files (força o uso)
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
