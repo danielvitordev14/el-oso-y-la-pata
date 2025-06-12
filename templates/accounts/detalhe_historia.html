@@ -35,6 +35,7 @@
         justify-content: center;
         align-items: center;
         padding: 20px;
+        padding-bottom: 60px; /* Espaço reduzido com placeholder */
         box-sizing: border-box;
     }
     
@@ -48,7 +49,6 @@
         object-fit: contain;
         border-radius: 10px;
         box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-        margin-top: auto; /* Garantir que a imagem não suba demais */
     }
     
     .slide-text {
@@ -338,6 +338,7 @@
         .slide {
             padding: 10px;
             padding-top: 70px; /* Base padrão */
+            padding-bottom: 50px; /* Espaço reduzido com placeholder no mobile */
             justify-content: center;
             transition: padding-top 0.3s ease;
         }
@@ -449,16 +450,43 @@
         }
         
         .music-controls {
-            bottom: 60px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: 60px;  /* Mover para cima */
+            left: 15px; /* Canto esquerdo */
+            bottom: auto;
+            transform: none;
             gap: 6px;
         }
         
-        .music-btn, .music-link {
-            width: 32px;
-            height: 32px;
-            font-size: 1rem;
+        /* Esconder link do YouTube no mobile */
+        .music-link {
+            display: none !important;
+        }
+        
+        .music-btn {
+            width: 36px;
+            height: 36px;
+            font-size: 1.1rem;
+        }
+        
+        /* Esconder botões piscantes de baixo no mobile */
+        .exit-hint {
+            display: none !important;
+        }
+        
+        /* Posicionar erro de música no mobile */
+        .music-error {
+            position: absolute;
+            top: 110px; /* Abaixo dos controles */
+            left: 15px;
+            right: 15px;
+            background: rgba(220, 53, 69, 0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            text-align: center;
+            backdrop-filter: blur(5px);
+            z-index: 11;
         }
     }
     
@@ -544,7 +572,7 @@
         </div>
         
         <!-- Aviso quando música não carrega -->
-        <div class="music-error" id="musicError" style="display: none; position: absolute; bottom: 120px; left: 50%; transform: translateX(-50%); background: rgba(220, 53, 69, 0.9); color: white; padding: 10px 15px; border-radius: 8px; font-size: 0.9rem; max-width: 80vw; text-align: center; backdrop-filter: blur(5px); z-index: 11;">
+        <div class="music-error" id="musicError" style="display: none;">
             <div>⚠️ Música bloqueada</div>
             <div style="font-size: 0.8rem; margin-top: 5px;">Desative bloqueadores de anúncios ou <a href="{{ historia.musica_youtube }}" target="_blank" style="color: #FFD43B;">abra no YouTube</a></div>
         </div>
@@ -563,6 +591,8 @@
                 <img src="{{ item.foto.url }}" alt="Foto da história">
                 {% if item.texto %}
                     <div class="slide-text">{{ item.texto }}</div>
+                {% else %}
+                    <div class="slide-text-placeholder" style="height: 80px; visibility: hidden;"></div>
                 {% endif %}
             </div>
         {% endfor %}
