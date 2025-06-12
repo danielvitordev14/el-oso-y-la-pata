@@ -212,20 +212,45 @@
             display: none !important;
         }
         
-        /* Garantir espaço para o título no desktop */
+        /* Espaçamento base - será ajustado dinamicamente */
         .slide {
-            padding-top: 120px; /* Espaço para o título */
+            padding-top: 80px; /* Base padrão */
+            transition: padding-top 0.3s ease;
+        }
+        
+        /* Ajustes dinâmicos baseados na orientação da imagem */
+        .slide.landscape-image {
+            padding-top: 90px; /* Mais espaço para imagens deitadas */
+        }
+        
+        .slide.portrait-image {
+            padding-top: 70px; /* Menos espaço para imagens em pé */
+        }
+        
+        .slide.square-image {
+            padding-top: 80px; /* Espaço médio para imagens quadradas */
         }
         
         .historia-title {
-            top: 30px;
+            top: 20px;
             font-size: 2rem;
-            padding: 15px 25px;
+            padding: 12px 20px;
             max-width: 80vw;
+            transition: top 0.3s ease;
         }
         
         .slide img {
-            max-height: 65vh; /* Ajustar altura para dar espaço ao título */
+            max-height: 70vh; /* Altura base */
+            transition: max-height 0.3s ease;
+        }
+        
+        /* Ajustes específicos para cada orientação */
+        .slide.landscape-image img {
+            max-height: 65vh; /* Menor altura para imagens deitadas */
+        }
+        
+        .slide.portrait-image img {
+            max-height: 75vh; /* Maior altura para imagens em pé */
         }
         
         .music-controls {
@@ -253,19 +278,39 @@
     }
     
     @media (min-width: 1200px) {
-        /* Mais espaço em telas grandes */
+        /* Ajustes para telas grandes */
         .slide {
-            padding-top: 140px; /* Mais espaço para o título */
+            padding-top: 90px; /* Base para telas grandes */
+        }
+        
+        .slide.landscape-image {
+            padding-top: 100px; /* Mais espaço para imagens deitadas */
+        }
+        
+        .slide.portrait-image {
+            padding-top: 80px; /* Menos espaço para imagens em pé */
+        }
+        
+        .slide.square-image {
+            padding-top: 90px; /* Espaço médio para imagens quadradas */
         }
         
         .historia-title {
-            top: 40px;
+            top: 25px;
             font-size: 2.2rem;
-            padding: 20px 30px;
+            padding: 15px 25px;
         }
         
         .slide img {
-            max-height: 60vh; /* Altura ajustada para telas grandes */
+            max-height: 70vh; /* Base para telas grandes */
+        }
+        
+        .slide.landscape-image img {
+            max-height: 65vh; /* Menor altura para imagens deitadas */
+        }
+        
+        .slide.portrait-image img {
+            max-height: 78vh; /* Maior altura para imagens em pé */
         }
         
         .music-controls {
@@ -291,14 +336,44 @@
         }
         
         .slide {
-            padding: 5px; /* Reduzido de 10px */
-            padding-top: 60px; /* Espaço menor do título */
+            padding: 10px;
+            padding-top: 70px; /* Base padrão */
+            justify-content: center;
+            transition: padding-top 0.3s ease;
+        }
+        
+        /* Ajustes dinâmicos para mobile baseados na orientação */
+        .slide.landscape-image {
+            padding-top: 80px; /* Mais espaço para imagens deitadas */
+        }
+        
+        .slide.portrait-image {
+            padding-top: 60px; /* Menos espaço para imagens em pé */
+        }
+        
+        .slide.square-image {
+            padding-top: 70px; /* Espaço padrão para quadradas */
         }
         
         .slide img {
             max-width: 95vw;
-            max-height: 65vh; /* Aumentado de 60vh */
+            max-height: 65vh;
             border-radius: 8px;
+            margin: auto;
+            transition: max-height 0.3s ease;
+        }
+        
+        /* Ajustes específicos das imagens no mobile */
+        .slide.landscape-image img {
+            max-height: 58vh; /* Menor altura para imagens deitadas */
+        }
+        
+        .slide.portrait-image img {
+            max-height: 72vh; /* Maior altura para imagens em pé */
+        }
+        
+        .slide.square-image img {
+            max-height: 65vh; /* Altura padrão para quadradas */
         }
         
         .slide-text {
@@ -389,11 +464,36 @@
     
     @media (max-width: 576px) {
         .slide {
-            padding-top: 50px; /* Ainda menor no mobile pequeno */
+            padding-top: 55px; /* Base para mobile pequeno */
+        }
+        
+        /* Ajustes específicos para mobile pequeno */
+        .slide.landscape-image {
+            padding-top: 65px; /* Mais espaço para imagens deitadas */
+        }
+        
+        .slide.portrait-image {
+            padding-top: 45px; /* Menos espaço para imagens em pé */
+        }
+        
+        .slide.square-image {
+            padding-top: 55px; /* Espaço padrão para quadradas */
         }
         
         .slide img {
-            max-height: 70vh; /* Aumentado para aproveitar mais espaço */
+            max-height: 70vh; /* Base para mobile pequeno */
+        }
+        
+        .slide.landscape-image img {
+            max-height: 62vh; /* Menor altura para imagens deitadas */
+        }
+        
+        .slide.portrait-image img {
+            max-height: 78vh; /* Maior altura para imagens em pé */
+        }
+        
+        .slide.square-image img {
+            max-height: 70vh; /* Altura padrão para quadradas */
         }
         
         .slide-text {
@@ -508,12 +608,53 @@ document.addEventListener('DOMContentLoaded', function() {
         totalSlidesSpan.textContent = slides.length;
     }
     
+    function detectImageOrientation(img, slide) {
+        return new Promise((resolve) => {
+            if (img.complete && img.naturalWidth && img.naturalHeight) {
+                applyOrientationClass(img, slide);
+                resolve();
+            } else {
+                img.onload = () => {
+                    applyOrientationClass(img, slide);
+                    resolve();
+                };
+            }
+        });
+    }
+    
+    function applyOrientationClass(img, slide) {
+        const aspectRatio = img.naturalWidth / img.naturalHeight;
+        
+        // Remove classes anteriores
+        slide.classList.remove('landscape-image', 'portrait-image', 'square-image');
+        
+        if (aspectRatio > 1.3) {
+            // Imagem deitada (landscape)
+            slide.classList.add('landscape-image');
+            console.log('Imagem deitada detectada:', aspectRatio.toFixed(2));
+        } else if (aspectRatio < 0.8) {
+            // Imagem em pé (portrait)
+            slide.classList.add('portrait-image');
+            console.log('Imagem em pé detectada:', aspectRatio.toFixed(2));
+        } else {
+            // Imagem quadrada ou próxima do quadrado
+            slide.classList.add('square-image');
+            console.log('Imagem quadrada detectada:', aspectRatio.toFixed(2));
+        }
+    }
+
     function showSlide(index) {
         console.log('Mostrando slide:', index + 1);
         slides.forEach((slide, i) => {
             slide.classList.remove('active');
             if (i === index) {
                 slide.classList.add('active');
+                
+                // Detectar orientação da imagem quando o slide fica ativo
+                const img = slide.querySelector('img');
+                if (img) {
+                    detectImageOrientation(img, slide);
+                }
             }
         });
         if (currentSlideSpan) {
@@ -553,6 +694,14 @@ document.addEventListener('DOMContentLoaded', function() {
         {% endif %}
         window.location.href = "{% url 'historias' %}";
     }
+    
+    // Detectar orientação de todas as imagens no início
+    slides.forEach((slide, index) => {
+        const img = slide.querySelector('img');
+        if (img) {
+            detectImageOrientation(img, slide);
+        }
+    });
     
     // Mostrar primeiro slide
     showSlide(0);
