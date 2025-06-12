@@ -206,6 +206,11 @@
     
     /* === RESPONSIVIDADE DESKTOP === */
     @media (min-width: 769px) {
+        /* Esconder botão mobile no desktop */
+        .mobile-fullscreen-btn {
+            display: none !important;
+        }
+        
         .music-controls {
             bottom: 50%;
             right: 30px;
@@ -254,30 +259,31 @@
         }
         
         .slide {
-            padding: 10px;
+            padding: 5px; /* Reduzido de 10px */
+            padding-top: 60px; /* Espaço menor do título */
         }
         
         .slide img {
             max-width: 95vw;
-            max-height: 60vh;
+            max-height: 65vh; /* Aumentado de 60vh */
             border-radius: 8px;
         }
         
         .slide-text {
             font-size: 1.2rem;
-            margin-top: 20px;
+            margin-top: 15px; /* Reduzido de 20px */
             max-width: 90vw;
-            padding: 15px 20px;
+            padding: 12px 18px; /* Ajustado */
             border-radius: 10px;
             line-height: 1.4;
         }
         
         .historia-title {
-            top: 15px;
-            font-size: 1.3rem;
-            padding: 10px 15px;
+            top: 10px; /* Reduzido de 15px */
+            font-size: 1.2rem; /* Reduzido de 1.3rem */
+            padding: 8px 12px; /* Reduzido */
             border-radius: 8px;
-            max-width: 90vw;
+            max-width: 85vw; /* Reduzido de 90vw */
             text-align: center;
         }
         
@@ -303,6 +309,33 @@
             font-size: 0.7rem;
         }
         
+        /* Botão fullscreen específico para mobile */
+        .mobile-fullscreen-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,212,59,0.9);
+            border: none;
+            color: #000;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 20;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        .mobile-fullscreen-btn:hover {
+            background: var(--girassol-dark);
+            transform: scale(1.05);
+        }
+        
+        .mobile-fullscreen-btn:active {
+            transform: scale(0.95);
+        }
+        
         .music-controls {
             bottom: 60px;
             left: 50%;
@@ -318,19 +351,32 @@
     }
     
     @media (max-width: 576px) {
+        .slide {
+            padding-top: 50px; /* Ainda menor no mobile pequeno */
+        }
+        
         .slide img {
-            max-height: 50vh;
+            max-height: 70vh; /* Aumentado para aproveitar mais espaço */
         }
         
         .slide-text {
             font-size: 1rem;
-            margin-top: 15px;
-            padding: 12px 15px;
+            margin-top: 10px; /* Reduzido ainda mais */
+            padding: 10px 12px; /* Mais compacto */
         }
         
         .historia-title {
-            font-size: 1.1rem;
-            padding: 8px 12px;
+            top: 8px; /* Mais próximo do topo */
+            font-size: 1rem; /* Menor no mobile pequeno */
+            padding: 6px 10px; /* Mais compacto */
+            max-width: 80vw; /* Mais estreito */
+        }
+        
+        .mobile-fullscreen-btn {
+            top: 10px;
+            right: 10px;
+            padding: 6px 10px;
+            font-size: 0.7rem;
         }
         
         .exit-hint {
@@ -347,6 +393,9 @@
 
 <div class="slideshow-container" id="slideshow">
     <div class="historia-title">{{ historia.titulo }}</div>
+    
+    <!-- Botão fullscreen específico para mobile -->
+    <button class="mobile-fullscreen-btn d-md-none" id="mobileFullscreenBtn">📱 Tela Cheia</button>
     
     {% if historia.musica_youtube %}
         <div class="music-controls">
@@ -373,7 +422,9 @@
         {% for item in itens %}
             <div class="slide {% if forloop.first %}active{% endif %}">
                 <img src="{{ item.foto.url }}" alt="Foto da história">
-                <div class="slide-text">{{ item.texto }}</div>
+                {% if item.texto %}
+                    <div class="slide-text">{{ item.texto }}</div>
+                {% endif %}
             </div>
         {% endfor %}
     {% else %}
@@ -554,31 +605,44 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     const fullscreenBtn = document.querySelector('.fullscreen-btn');
-    if (fullscreenBtn) {
-        // Atualizar texto do botão baseado no estado
-        function updateFullscreenBtn() {
-            if (document.fullscreenElement) {
-                fullscreenBtn.textContent = 'Sair Tela Cheia';
-            } else {
-                fullscreenBtn.textContent = 'Tela Cheia';
-            }
+    const mobileFullscreenBtn = document.getElementById('mobileFullscreenBtn');
+    
+    // Função para atualizar botões baseado no estado
+    function updateFullscreenButtons() {
+        const isFullscreen = document.fullscreenElement;
+        
+        if (fullscreenBtn) {
+            fullscreenBtn.textContent = isFullscreen ? 'Sair Tela Cheia' : 'Tela Cheia';
         }
         
-        fullscreenBtn.addEventListener('click', function(e) {
-            e.stopPropagation(); // Evitar fechar o slideshow
-            if (document.fullscreenElement) {
-                document.exitFullscreen();
-            } else {
-                slideshow.requestFullscreen();
-            }
-        });
-        
-        // Escutar mudanças no fullscreen
-        document.addEventListener('fullscreenchange', updateFullscreenBtn);
-        
-        // Atualizar texto inicial
-        updateFullscreenBtn();
+        if (mobileFullscreenBtn) {
+            mobileFullscreenBtn.textContent = isFullscreen ? '📱 Sair Tela Cheia' : '📱 Tela Cheia';
+        }
     }
+    
+    // Função para toggle fullscreen
+    function toggleFullscreen(e) {
+        e.stopPropagation(); // Evitar fechar o slideshow
+        if (document.fullscreenElement) {
+            document.exitFullscreen();
+        } else {
+            slideshow.requestFullscreen();
+        }
+    }
+    
+    if (fullscreenBtn) {
+        fullscreenBtn.addEventListener('click', toggleFullscreen);
+    }
+    
+    if (mobileFullscreenBtn) {
+        mobileFullscreenBtn.addEventListener('click', toggleFullscreen);
+    }
+    
+    // Escutar mudanças no fullscreen
+    document.addEventListener('fullscreenchange', updateFullscreenButtons);
+    
+    // Atualizar texto inicial
+    updateFullscreenButtons();
 
     // Função para mostrar erro de música bloqueada
     function showMusicError() {

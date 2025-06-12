@@ -39,7 +39,7 @@ class Historia(models.Model):
 class ItemHistoria(models.Model):
     historia = models.ForeignKey(Historia, on_delete=models.CASCADE, related_name='itens')
     foto = models.ImageField(upload_to='historias_fotos/', storage=MediaCloudinaryStorage())
-    texto = models.TextField()
+    texto = models.TextField(blank=True, null=True)
     ordem = models.PositiveIntegerField(default=0)
 
     def __str__(self):

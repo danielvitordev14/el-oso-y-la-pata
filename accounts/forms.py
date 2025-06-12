@@ -45,13 +45,28 @@ class HistoriaForm(forms.ModelForm):
         }
 
 class ItemHistoriaForm(forms.ModelForm):
+    texto = forms.CharField(
+        label='Texto (opcional)',
+        required=False,
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'rows': 4,
+            'placeholder': 'Digite o texto que aparecerá com a imagem (opcional)...'
+        }),
+        help_text='Deixe em branco se quiser apenas a imagem.'
+    )
+    
     class Meta:
         model = ItemHistoria
         fields = ['foto', 'texto', 'ordem']
         labels = {
             'foto': 'Foto',
-            'texto': 'Texto',
+            'texto': 'Texto (opcional)',
             'ordem': 'Ordem do Item'
+        }
+        widgets = {
+            'foto': forms.FileInput(attrs={'class': 'form-control'}),
+            'ordem': forms.NumberInput(attrs={'class': 'form-control'})
         }
 
 class EditarPerfilForm(forms.ModelForm):
