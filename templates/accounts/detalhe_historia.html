@@ -142,7 +142,7 @@
     
     .music-controls {
         position: absolute;
-        bottom: 80px;
+        bottom: 120px;
         left: 50%;
         transform: translateX(-50%);
         display: flex;
@@ -150,6 +150,7 @@
         align-items: center;
         opacity: 0.6;
         transition: opacity 0.3s;
+        z-index: 10;
     }
     
     .music-controls:hover {
@@ -201,6 +202,48 @@
         background: rgba(255,212,59,0.2);
         transform: scale(1.1);
         border-color: #FFD43B;
+    }
+    
+    /* === RESPONSIVIDADE DESKTOP === */
+    @media (min-width: 769px) {
+        .music-controls {
+            bottom: 50%;
+            right: 30px;
+            left: auto;
+            transform: translateY(50%);
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .music-error {
+            bottom: 50%;
+            right: 90px;
+            left: auto;
+            transform: translateY(50%);
+            max-width: 250px;
+        }
+        
+        .music-link, .music-btn {
+            width: 44px;
+            height: 44px;
+            font-size: 1.3rem;
+        }
+    }
+    
+    @media (min-width: 1200px) {
+        .music-controls {
+            right: 50px;
+        }
+        
+        .music-error {
+            right: 120px;
+        }
+        
+        .music-link, .music-btn {
+            width: 48px;
+            height: 48px;
+            font-size: 1.4rem;
+        }
     }
     
     /* === RESPONSIVIDADE MOBILE === */
@@ -310,10 +353,18 @@
             <a href="{{ historia.musica_youtube }}" target="_blank" class="music-link" title="Abrir no YouTube">🎵</a>
             <button class="music-btn" id="musicToggle" title="Pausar música">🔊</button>
         </div>
+        
+        <!-- Aviso quando música não carrega -->
+        <div class="music-error" id="musicError" style="display: none; position: absolute; bottom: 120px; left: 50%; transform: translateX(-50%); background: rgba(220, 53, 69, 0.9); color: white; padding: 10px 15px; border-radius: 8px; font-size: 0.9rem; max-width: 80vw; text-align: center; backdrop-filter: blur(5px); z-index: 11;">
+            <div>⚠️ Música bloqueada</div>
+            <div style="font-size: 0.8rem; margin-top: 5px;">Desative bloqueadores de anúncios ou <a href="{{ historia.musica_youtube }}" target="_blank" style="color: #FFD43B;">abra no YouTube</a></div>
+        </div>
         <iframe id="musicPlayer" class="music-player" 
                 src="" 
                 frameborder="0" 
-                allow="autoplay; encrypted-media">
+                allow="autoplay; encrypted-media; fullscreen"
+                referrerpolicy="strict-origin-when-cross-origin"
+                sandbox="allow-scripts allow-same-origin allow-presentation">
         </iframe>
     {% endif %}
     
@@ -511,7 +562,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function getYouTubeEmbedUrl(url) {
         const videoId = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/);
         if (videoId) {
-            return `https://www.youtube.com/embed/${videoId[1]}?autoplay=1&loop=1&playlist=${videoId[1]}&controls=0&mute=0`;
+            // Remover autoplay para evitar bloqueios
+            return `https://www.youtube.com/embed/${videoId[1]}?loop=1&playlist=${videoId[1]}&controls=1&mute=1&enablejsapi=1`;
         }
         return null;
     }
@@ -525,9 +577,42 @@ document.addEventListener('DOMContentLoaded', function() {
     if (musicPlayer && musicUrl) {
         const embedUrl = getYouTubeEmbedUrl(musicUrl);
         if (embedUrl) {
-            musicPlayer.src = embedUrl;
-            isMusicPlaying = true;
-            console.log('Música iniciada:', embedUrl);
+            try {
+                musicPlayer.src = embedUrl;
+                isMusicPlaying = true;
+                console.log('Música iniciada:', embedUrl);
+                
+                // Detectar se iframe foi bloqueado
+                setTimeout(() => {
+                    try {
+                        // Tentar acessar o iframe para ver se carregou
+                        if (musicPlayer.contentDocument === null && musicPlayer.src) {
+                            throw new Error('Iframe bloqueado');
+                        }
+                    } catch (error) {
+                        console.warn('YouTube iframe provavelmente bloqueado');
+                        const musicError = document.getElementById('musicError');
+                        if (musicError) {
+                            musicError.style.display = 'block';
+                            setTimeout(() => {
+                                musicError.style.display = 'none';
+                            }, 8000); // Mostrar por mais tempo
+                        }
+                    }
+                }, 3000); // Verificar após 3 segundos
+                
+            } catch (error) {
+                console.warn('Erro ao carregar música do YouTube:', error);
+                console.log('Possíveis causas: bloqueador de anúncios, extensões de privacidade, ou políticas do navegador');
+                // Mostrar aviso de erro
+                const musicError = document.getElementById('musicError');
+                if (musicError) {
+                    musicError.style.display = 'block';
+                    setTimeout(() => {
+                        musicError.style.display = 'none';
+                    }, 5000); // Esconder após 5 segundos
+                }
+            }
         }
     }
     
@@ -544,11 +629,17 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 const embedUrl = getYouTubeEmbedUrl(musicUrl);
                 if (embedUrl) {
-                    musicPlayer.src = embedUrl;
-                    musicToggle.textContent = '🔊';
-                    musicToggle.title = 'Pausar música';
-                    isMusicPlaying = true;
-                    console.log('Música retomada');
+                    // Tentar carregar o iframe
+                    try {
+                        musicPlayer.src = embedUrl;
+                        musicToggle.textContent = '🔊';
+                        musicToggle.title = 'Pausar música';
+                        isMusicPlaying = true;
+                        console.log('Música retomada');
+                    } catch (error) {
+                        console.warn('Erro ao carregar música do YouTube:', error);
+                        console.log('Isso pode ser causado por bloqueadores de anúncios ou extensões de privacidade');
+                    }
                 }
             }
         });
