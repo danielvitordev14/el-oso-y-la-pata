@@ -558,6 +558,29 @@ document.addEventListener('DOMContentLoaded', function() {
         updateFullscreenBtn();
     }
 
+    // Função para mostrar erro de música bloqueada
+    function showMusicError() {
+        const musicError = document.getElementById('musicError');
+        if (musicError && musicError.style.display === 'none') {
+            musicError.style.display = 'block';
+            setTimeout(() => {
+                musicError.style.display = 'none';
+            }, 6000); // Mostrar por 6 segundos
+        }
+    }
+    
+    // Detectar erros de rede relacionados ao YouTube
+    const originalConsoleError = console.error;
+    console.error = function(...args) {
+        const message = args.join(' ');
+        if (message.includes('ERR_BLOCKED_BY_CLIENT') || 
+            message.includes('youtube.com') && message.includes('blocked')) {
+            console.warn('Detectado bloqueio do YouTube:', message);
+            showMusicError();
+        }
+        originalConsoleError.apply(console, args);
+    };
+    
     // Função para converter URL do YouTube para embed
     function getYouTubeEmbedUrl(url) {
         const videoId = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/);
@@ -582,36 +605,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 isMusicPlaying = true;
                 console.log('Música iniciada:', embedUrl);
                 
-                // Detectar se iframe foi bloqueado
-                setTimeout(() => {
-                    try {
-                        // Tentar acessar o iframe para ver se carregou
-                        if (musicPlayer.contentDocument === null && musicPlayer.src) {
-                            throw new Error('Iframe bloqueado');
-                        }
-                    } catch (error) {
-                        console.warn('YouTube iframe provavelmente bloqueado');
-                        const musicError = document.getElementById('musicError');
-                        if (musicError) {
-                            musicError.style.display = 'block';
-                            setTimeout(() => {
-                                musicError.style.display = 'none';
-                            }, 8000); // Mostrar por mais tempo
-                        }
-                    }
-                }, 3000); // Verificar após 3 segundos
+                // Log de sucesso - sem detecção automática
+                console.log('Iframe do YouTube configurado');
                 
             } catch (error) {
                 console.warn('Erro ao carregar música do YouTube:', error);
                 console.log('Possíveis causas: bloqueador de anúncios, extensões de privacidade, ou políticas do navegador');
-                // Mostrar aviso de erro
-                const musicError = document.getElementById('musicError');
-                if (musicError) {
-                    musicError.style.display = 'block';
-                    setTimeout(() => {
-                        musicError.style.display = 'none';
-                    }, 5000); // Esconder após 5 segundos
-                }
+                // Apenas logar o erro - não mostrar aviso automaticamente
             }
         }
     }
@@ -636,9 +636,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         musicToggle.title = 'Pausar música';
                         isMusicPlaying = true;
                         console.log('Música retomada');
+                        
+                        // Log simples - sem verificação automática
+                        console.log('Tentando carregar iframe do YouTube');
+                        
                     } catch (error) {
                         console.warn('Erro ao carregar música do YouTube:', error);
                         console.log('Isso pode ser causado por bloqueadores de anúncios ou extensões de privacidade');
+                        // Só mostrar erro se for erro de bloqueio específico
+                        if (error.message && (error.message.includes('blocked') || error.message.includes('ERR_BLOCKED_BY_CLIENT'))) {
+                            showMusicError();
+                        }
                     }
                 }
             }
